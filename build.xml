@@ -38,7 +38,7 @@
 
 <project name="AutioUtils" default="jar" basedir=".">
 
-  <property name="version" value="0.1"/>
+  <property name="version" value="0.2"/>
   <property name="build" location="build"/>
   <property name="classes" location="${build}/classes"/>
   <property name="dist" location="dist"/>
