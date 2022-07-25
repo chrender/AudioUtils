@@ -40,8 +40,12 @@
 
   <property name="version" value="0.2"/>
   <property name="build" location="build"/>
+  <property name="build.test" location="build-test"/>
   <property name="classes" location="${build}/classes"/>
+  <property name="classes.test" location="${build.test}/classes"/>
   <property name="dist" location="dist"/>
+  <property name="lib.dir" value="lib" />
+  <property name="output.dir" value="output" />
 
   <target name="clean">
     <delete dir="${build}"/>
@@ -49,16 +53,41 @@
 
   <target name="compile">
     <mkdir dir="${classes}"/>
-    <javac srcdir="src" destdir="${classes}"
+    <javac srcdir="src/main" destdir="${classes}"
       includeantruntime="false" debug="true">
      <compilerarg value="-Xlint:unchecked" />
      <compilerarg value="-Xlint:deprecation" />
-    </javac>
-  </target>
+   </javac>
+ </target>
 
-  <target name="jar" depends="compile">
-    <jar destfile="${dist}/ce-audioutils-v${version}.jar"
-      basedir="${classes}"/>
+ <path id="classpath">
+   <fileset dir="${lib.dir}" includes="**/*.jar"/>
+ </path>
+
+ <target name="test" depends="compile">
+   <mkdir dir="${classes.test}"/>
+   <mkdir dir="${output.dir}"/>
+   <javac srcdir="src/test" destdir="${classes.test}" classpath="${classes}" includeantruntime="false" debug="true">
+     <classpath refid="classpath"/>
+     <compilerarg value="-Xlint:unchecked" />
+     <compilerarg value="-Xlint:deprecation" />
+   </javac>
+   <junitlauncher>
+     <classpath refid="classpath"/>
+     <classpath>
+       <pathelement location="${classes.test}"/>
+     </classpath>
+     <testclasses outputdir="${output.dir}">
+       <fileset dir="${classes.test}"/>
+       <listener type="legacy-brief" sendSysOut="true"/>
+       <listener type="legacy-xml" sendSysErr="true" sendSysOut="true"/>
+     </testclasses>
+   </junitlauncher>
+ </target>
+
+ <target name="jar" depends="compile">
+   <jar destfile="${dist}/ce-audioutils-v${version}.jar"
+    basedir="${classes}"/>
   </target>
 
 </project>
